@@ -13,8 +13,8 @@ global {
 	//Shapefile of the exit
 	file exit_shapefile <- shape_file("../includes/exit.shp");
 	//DImension of the grid agent
-	int nb_cols <- 50;
-	int nb_rows <- 50;
+	int nb_cols <- 20;
+	int nb_rows <- 20;
 
 	//Shape of the world initialized as the bounding box around the walls
 	geometry shape <- envelope(wall_shapefile);
@@ -24,13 +24,13 @@ global {
 
 	init {
 	//Creation of the wall and initialization of the cell is_wall attribute
-		create wall from: wall_shapefile {
-			ask cell overlapping self {
-				is_wall <- true;
-			}
-
-		}
-		//Creation of the exit and initialization of the cell is_exit attribute
+	//		create wall from: wall_shapefile {
+	//			ask cell overlapping self {
+	//				is_wall <- true;
+	//			}
+	//
+	//		}
+	//Creation of the exit and initialization of the cell is_exit attribute
 		create exit from: exit_shapefile {
 			ask (cell overlapping self) where not each.is_wall {
 				is_exit <- true;
@@ -38,10 +38,10 @@ global {
 
 		}
 		//Creation of the people agent
-		create people number: 250 {
+		create people number: 200 {
 		//People agent are placed randomly among cells which aren't wall
-			c <- one_of(cell where (not each.is_wall and not each.used)); 
-			c.used<-true;
+			c <- one_of(cell where (not each.is_wall and not each.used));
+			c.used <- true;
 			location <- c.location;
 			//Target of the people agent is one of the possible exits
 			target <- one_of(cell where each.is_exit).location;
@@ -51,9 +51,9 @@ global {
 
 }
 //Grid species to discretize space
-grid cell width: nb_cols height: nb_rows neighbors: 8 {
+grid cell width: nb_cols height: nb_rows neighbors: 8 parallel: true {
 	bool is_wall <- false;
-	bool used <- false; 
+	bool used <- false;
 	bool is_exit <- false;
 	people p;
 	rgb color <- #white;
@@ -80,60 +80,67 @@ species wall {
 
 }
 //Species which represent the people moving from their location to an exit using the skill moving
-species people skills: [moving] parallel: true {
+species people skills: [moving] parallel: false {
 	cell c;
 	int no <- rnd(max);
 	//Evacuation point
 	point target;
 	rgb color <- rnd_color(255);
+	list<cell> passed <- [];
 	path path_followed;
 	//Reflex to move the agent 
 	reflex move {
+	//Make the agent move only on cell without walls 
+	//		do goto target: target speed: 1.0 on: (cell where (not each.is_wall and (each.p != self))) return_path: true recompute_path: true; 
+		path_followed <- goto(target: target, on: (cell where ((not each.is_wall) and (not each.used))), speed: 0.5, recompute_path: true, return_path: true);
 		if (path_followed != nil) {
-			ask (cell overlapping path_followed.shape) {
+			ask (passed) {
 				used <- false;
 				p <- nil;
 				color <- #white;
 			}
 
+			passed <- cell overlapping path_followed.shape;
 		}
-		//Make the agent move only on cell without walls 
-		//		do goto target: target speed: 1.0 on: (cell where (not each.is_wall and (each.p != self))) return_path: true recompute_path: true;
-		path_followed <- goto(target: target, on: (cell where ((not each.is_wall) and (not each.used))), speed: 1.0, recompute_path: true, return_path: true);
-		if (path_followed != nil) {
-			ask (cell overlapping path_followed.shape) {
-				used <- true;
-				p <- myself;
-				color <- myself.color;
+
+		ask (passed) {
+			used <- true;
+			p <- myself;
+			color <- myself.color;
+		}
+
+		if (current_edge = nil) {
+			ask (passed) {
+				used <- false;
+				p <- nil;
+				color <- #white;
 			}
 
+			target <- one_of(cell where each.is_exit).location;
 		}
 		//If the agent is close enough to the exit, it dies
 		if (self distance_to target) < 5.0 {
-			if (path_followed != nil) {
-				ask (cell overlapping path_followed.shape) {
-					used <- false;
-					p <- nil;
-					color <- #white;
-				}
-
+			ask (passed) {
+				used <- false;
+				p <- nil;
+				color <- #white;
 			}
 
 			do die;
 		} }
 
 	aspect default {
-	//		draw pyramid(2.5) color: color;
-	//		draw sphere(1) at: {location.x, location.y, 2} color: color;
-		draw gif_file("../includes/" + no + ".gif") size: {5, 5}; // rotate: heading + 45;
-//		draw myname[no] color: #black at: {location.x, location.y + 3}; //rotate: heading + 45;
+//		draw pyramid(2.5) color: color;
+//		draw sphere(1) at: {location.x, location.y, 2} color: color;
+				draw gif_file("../includes/" + no + ".gif") size: {5, 5}; // rotate: heading + 45;
+		//		draw myname[no] color: #black at: {location.x, location.y + 3}; //rotate: heading + 45;
 	} }
 
 experiment evacuationgoto type: gui {
 	float minimum_cycle_duration <- 0.04;
 	output {
 		display map type: opengl {
-		//			grid cell; //lines: #black;
+//			grid cell; //lines: #black;
 			species wall refresh: false;
 			species exit refresh: false;
 			species people;
