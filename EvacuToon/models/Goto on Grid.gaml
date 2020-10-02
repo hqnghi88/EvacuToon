@@ -38,7 +38,7 @@ global {
 
 		}
 		//Creation of the people agent
-		create people number: 200 {
+		create people number: 50 {
 		//People agent are placed randomly among cells which aren't wall
 			c <- one_of(cell where (not each.is_wall and not each.used));
 			c.used <- true;
@@ -132,7 +132,7 @@ species people skills: [moving] parallel: false {
 	aspect default {
 //		draw pyramid(2.5) color: color;
 //		draw sphere(1) at: {location.x, location.y, 2} color: color;
-				draw gif_file("../includes/" + no + ".gif") size: {5, 5}; // rotate: heading + 45;
+				draw gif_file("../includes/" + no + ".gif") size: {10, 10}; // rotate: heading + 45;
 		//		draw myname[no] color: #black at: {location.x, location.y + 3}; //rotate: heading + 45;
 	} }
 
