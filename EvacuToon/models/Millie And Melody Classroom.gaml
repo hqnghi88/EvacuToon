@@ -41,7 +41,7 @@ global {
 	string event <- "study";
 
 	init {
-	//		myname <- shuffle(myname);
+		myname <- shuffle(myname);
 		list<geometry> tbl <- [];
 		float xx <- 20.0;
 		float yy <- 70.0;
@@ -126,7 +126,7 @@ species people skills: [moving] parallel: true {
 	}
 
 	reflex playing when: event = "playtime" {
-		do wander bounds: class[0] amplitude: 45.0 speed: rnd(15.0);
+		do wander bounds: class[0] amplitude: 90.0 speed: rnd(15.0);
 	}
 
 	cell c;
@@ -196,7 +196,8 @@ grid cell width: nb_cols height: nb_rows neighbors: 8 parallel: true {
 }
 
 species hazard {
-	geometry shape<-square(20);
+	geometry shape <- square(20);
+
 	aspect default {
 		draw gif_file("../includes/fire.gif") size: {25, 25};
 	}
@@ -221,7 +222,7 @@ species clock {
 		if (event != "hazard" and flip(0.01)) {
 			event <- "hazard";
 			create hazard {
-				location <- any_location_in(class[0]);
+				location <- any_location_in(class[0] - table);
 				ask cell overlapping self {
 					is_wall <- true;
 				}
