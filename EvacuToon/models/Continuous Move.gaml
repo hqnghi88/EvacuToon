@@ -22,7 +22,7 @@ global {
 	int nb_people <- 50;
 	//Point to evacuate
 	point target_point <- {shape.width, 0};
-	int max<-17;
+	int max<-10;
 	list myname<-["daisy","cathy","matina","lyly","millie","melody","catarina","elisabeth","paul","john","marc","helen","raon","peter","tommy","linda","anthony","phillip","rock"];
 	init { 
 		

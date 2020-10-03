@@ -13,8 +13,8 @@ global {
 	//Shapefile of the exit
 	file exit_shapefile <- shape_file("../includes/exit.shp");
 	//DImension of the grid agent
-	int nb_cols <- 20;
-	int nb_rows <- 20;
+	int nb_cols <- 8;
+	int nb_rows <- 8;
 
 	//Shape of the world initialized as the bounding box around the walls
 	geometry shape <- envelope(wall_shapefile);
@@ -38,7 +38,7 @@ global {
 
 		}
 		//Creation of the people agent
-		create people number: 50 {
+		create people number: 20 {
 		//People agent are placed randomly among cells which aren't wall
 			c <- one_of(cell where (not each.is_wall and not each.used));
 			c.used <- true;
@@ -80,7 +80,7 @@ species wall {
 
 }
 //Species which represent the people moving from their location to an exit using the skill moving
-species people skills: [moving] parallel: false {
+species people skills: [moving] parallel: true {
 	cell c;
 	int no <- rnd(max);
 	//Evacuation point
@@ -132,7 +132,7 @@ species people skills: [moving] parallel: false {
 	aspect default {
 //		draw pyramid(2.5) color: color;
 //		draw sphere(1) at: {location.x, location.y, 2} color: color;
-				draw gif_file("../includes/" + no + ".gif") size: {10, 10}; // rotate: heading + 45;
+				draw gif_file("../includes/" + no + ".gif") size: {20, 20}; // rotate: heading + 45;
 		//		draw myname[no] color: #black at: {location.x, location.y + 3}; //rotate: heading + 45;
 	} }
 
