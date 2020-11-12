@@ -25,28 +25,8 @@ species people skills: [moving] {
 	path path_followed;
 	int count <- 0;
 	bool arrived <- false;
-
-	//	reflex go_to_center when: event != "hazard" {
-	//		heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
-	//		do goto target:target on: (cell where ((not each.is_wall) and (not each.used)))  speed: speed;
-	//		
-	//		//		do move speed: speed;
-	//	}
-	//	reflex flee_others{ //event != "hazard" {
-	//		people close <- one_of(((self neighbors_at range) of_species people) sort_by (self distance_to each));
-	//		if close != nil {
-	//			heading <- (self towards close) - 180;
-	//			float dist <- self distance_to close;
-	//			do move speed: dist / repulsion_strength heading: heading;
-	//			//			do wander speed: dist / repulsion_strength;
-	//		}
-	//
-	////		int nn <- length((self neighbors_at (range * 1.5)) of_species people);
-	////		if (nn > 4) {
-	////			count <- count + 1;
-	////		}
-	//
-	//	}
+	int sex<-rnd(1);
+ 
 	reflex visit when: !is_presenter { //when: event = "hazard" {
 		ask cell at location {
 			used <- false;
@@ -71,7 +51,7 @@ species people skills: [moving] {
 		//			p <- myself;
 		//			color <- myself.color;
 		//		}
-		if (current_edge = nil and flip(0.1)) {
+		if (current_edge = nil and flip(0.01)) {
 			ask cell at location {
 				used <- false;
 			}
@@ -119,6 +99,6 @@ species people skills: [moving] {
 		} }
 
 	aspect default {
-		draw pyramid(size) color: color;
+		draw sex=1?pyramid(size):box(4,10,size) color: color;
 		draw sphere(size / 3) at: {location.x, location.y, size * 0.75} color: color;
 	} }

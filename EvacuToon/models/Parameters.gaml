@@ -32,6 +32,6 @@ global {
 	list<file>
 	images <- [file("../images/eraser.png"), file("../images/fire.png"), file("../images/table.png"), file("../images/people.png"), file("../images/table2.png"), file("../images/tablechairs.png")];
 	list<file> label_img <- [file("../images/A.png"), file("../images/B.png"), file("../images/C.png"), file("../images/D.png"), file("../images/E.png")];
-	list<int> obstacle_depth <- [50, 1, 50, 50, 50, 50];
+	list<int> obstacle_depth <- [50, 1, 50, 50, 50, 50];	 
 	string event <- "vvhazard";
 } 
