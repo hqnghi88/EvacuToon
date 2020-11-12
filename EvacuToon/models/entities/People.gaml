@@ -1,10 +1,12 @@
 model People
 
 import "../Parameters.gaml"
+import "Stand.gaml"
 import "Cell.gaml"
 
 //Species cell which represents the cell agents, using the skill moving
 species people skills: [moving] {
+	bool is_presenter <- false;
 	point center;
 	//Color of the cell, randomly chosen
 	rgb color const: true <- [100 + rnd(155), 100 + rnd(155), 100 + rnd(155)] as rgb;
@@ -21,75 +23,102 @@ species people skills: [moving] {
 	point target;
 	list<cell> passed <- [];
 	path path_followed;
-	int count <- 0; 
-	bool arrived<-false;
+	int count <- 0;
+	bool arrived <- false;
 
-//	reflex go_to_center when: event != "hazard" {
-//		heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
-//		do goto target:target on: (cell where ((not each.is_wall) and (not each.used)))  speed: speed;
-//		
-//		//		do move speed: speed;
-//	}
-
-	reflex flee_others   when:count_fire=0{//event != "hazard" {
-		people close <- one_of(((self neighbors_at range) of_species people) sort_by (self distance_to each));
-		if close != nil {
-			heading <- (self towards close) - 180;
-			float dist <- self distance_to close;
-			do move speed: dist / repulsion_strength heading: heading;
-			do wander speed: dist / repulsion_strength;
+	//	reflex go_to_center when: event != "hazard" {
+	//		heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
+	//		do goto target:target on: (cell where ((not each.is_wall) and (not each.used)))  speed: speed;
+	//		
+	//		//		do move speed: speed;
+	//	}
+	//	reflex flee_others{ //event != "hazard" {
+	//		people close <- one_of(((self neighbors_at range) of_species people) sort_by (self distance_to each));
+	//		if close != nil {
+	//			heading <- (self towards close) - 180;
+	//			float dist <- self distance_to close;
+	//			do move speed: dist / repulsion_strength heading: heading;
+	//			//			do wander speed: dist / repulsion_strength;
+	//		}
+	//
+	////		int nn <- length((self neighbors_at (range * 1.5)) of_species people);
+	////		if (nn > 4) {
+	////			count <- count + 1;
+	////		}
+	//
+	//	}
+	reflex visit when: !is_presenter { //when: event = "hazard" {
+		ask cell at location {
+			used <- false;
 		}
-
-		int nn <- length((self neighbors_at (range * 1.5)) of_species people);
-		if (nn > 4) {
-			count <- count + 1;
-		}
-
-	}
-
-	reflex evacuate when: !arrived{//when: event = "hazard" {
-	//		do goto target: target speed: 1.0 on: (cell where (not each.is_wall and (each.p != self))) return_path: true recompute_path: true; 
+		//		do goto target: target speed: 1.0 on: (cell where (not each.is_wall and (each.p != self))) return_path: true recompute_path: true; 
 		path_followed <- goto(target: target, on: (cell where ((not each.is_wall) and (not each.used))), speed: 15.0, recompute_path: true, return_path: true);
-		if (path_followed != nil) {
-			ask (passed) {
-				used <- false;
-				p <- nil;
-				color <- #white;
-			}
-
-			passed <- cell overlapping path_followed.shape;
-		}
-
-		ask (passed) {
+		ask cell at location {
 			used <- true;
-			p <- myself;
-			color <- myself.color;
 		}
-
-		if (current_edge = nil) {
-			ask (passed) {
+		//		if (path_followed != nil) {
+		//			ask (passed) {
+		//				used <- false;
+		//				p <- nil;
+		//				color <- #white;
+		//			}
+		//
+		//			passed <- cell overlapping path_followed.shape;
+		//		}
+		//
+		//		ask (passed) {
+		//			used <- true;
+		//			p <- myself;
+		//			color <- myself.color;
+		//		}
+		if (current_edge = nil and flip(0.1)) {
+			ask cell at location {
 				used <- false;
-				p <- nil;
-				color <- #white;
 			}
 
-//				center <- any(cc);
-//				target<-cell at center.location;
-//			target <- one_of(cell where each.is_exit).location;
+			center <- any_location_in(any(stand).shape);
+			target <- cell at center;
+			if (count_fire > 0) {
+				target <- one_of(cell where each.is_exit).location;
+			}
+			//			target <- one_of(cell where each.is_exit).location;
 		}
+		//		people close <- one_of(((self neighbors_at range) of_species people) sort_by (self distance_to each));
+		//		if close != nil {
+		//			heading <- (self towards close) - 180;
+		//			float dist <- self distance_to close;
+		//			do move speed: dist / repulsion_strength heading: heading;
+		//			//			do wander speed: dist / repulsion_strength;
+		//		}
 		//If the agent is close enough to the exit, it dies
-		if ((self distance_to target) < 10.0) {
-			ask (passed) {
-				used <- false;
-				p <- nil;
-				color <- #white;
-			}
-			arrived<-true;
+		if ((self distance_to target) < 100.0) {
+			if (flip(0.00001)) {
+			//				ask (passed) {
+			//					used <- false;
+			//					p <- nil;
+			//					color <- #white;
+			//				}
+				ask cell at location {
+					used <- false;
+				}
 
-//			do die;
-		} 
-		}
+				center <- any_location_in(any(stand).shape);
+				target <- cell at center;
+			}
+			//			arrived <- true;
+
+			//			do die;
+			if (count_fire > 0) {
+				ask cell at location {
+					used <- false;
+				}
+
+				do die;
+			}
+
+		} }
 
 	aspect default {
-		draw sphere(size) color: color;
+		draw pyramid(size) color: color;
+		draw sphere(size / 3) at: {location.x, location.y, size * 0.75} color: color;
 	} }

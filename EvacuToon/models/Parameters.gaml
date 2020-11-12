@@ -2,9 +2,9 @@ model param
 
 global {
 //Number of agents to create
-	int number_of_agents <- 15;
+	int number_of_agents <- 2;
 	//Radius of the circle that the cells will make
-	float radius_of_circle <- 5.0;
+	float radius_of_circle <- 15.0;
 	//Repulsion strength of one cell to the others
 	int repulsion_strength min: 1 <- 10;
 	//Size of the environment
@@ -12,7 +12,7 @@ global {
 	//Range of the agents
 	int range_of_agents min: 1 <- 15;
 	//Speed of the agents
-	float speed_of_agents  <- 15.0;
+	float speed_of_agents <- 15.0;
 	//Size of the agents
 	int nb_cols <- 100;
 	int nb_rows <- 100;
@@ -27,8 +27,11 @@ global {
 
 	//current action type
 	int action_type <- -1;
-	int count_fire<-0;
+	int count_fire <- 0;
 	//images used for the buttons
-	list<file> images <- [file("../images/eraser.png"),file("../images/rock.png"),file("../images/fire.gif")];
+	list<file>
+	images <- [file("../images/eraser.png"), file("../images/fire.png"), file("../images/table.png"), file("../images/people.png"), file("../images/table2.png"), file("../images/tablechairs.png")];
+	list<file> label_img <- [file("../images/A.png"), file("../images/B.png"), file("../images/C.png"), file("../images/D.png"), file("../images/E.png")];
+	list<int> obstacle_depth <- [50, 1, 50, 50, 50, 50];
 	string event <- "vvhazard";
 } 

@@ -36,8 +36,9 @@ global {
 		//		save gate to:"../includes/gates.shp" type:shp;
 		create stand from: stand_shp {
 			create people number: number_of_agents {
-				location <- any_location_in(myself.shape);
-				center <- myself.location;
+				is_presenter<-true;
+				location <- any_location_in(myself.shape); 
+				center <- any_location_in(myself.shape);
 				target <- cell at center.location;
 				//				target <- one_of(cell where each.is_exit).location;
 			}
@@ -63,15 +64,15 @@ global {
 //			}
 		}
 
-		if (length(people where (each.count > 20)) > 5) {
-			ask (people where (each.count > 20)) {
-				arrived <- false;
-				center <- any(cc);
-				target <- cell at center.location;
-				count <- 0;
-			}
-
-		}
+//		if (length(people where (each.count > 20)) > 5) {
+//			ask (people where (each.count > 20)) {
+//				arrived <- false;
+//				center <- any(cc);
+//				target <- cell at center.location;
+//				count <- 0;
+//			}
+//
+//		}
 
 	}
 

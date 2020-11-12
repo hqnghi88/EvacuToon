@@ -9,6 +9,7 @@ model circle_model
 
 import "Parameters.gaml"
 import "entities/Button.gaml"
+import "entities/Stand.gaml"
 import "entities/Cell.gaml"
 import "entities/Ground.gaml"
 
@@ -39,23 +40,38 @@ global {
 		ground selected_cell <- first(ground overlapping (circle(1.0) at_location #user_location));
 		if (selected_cell != nil) {
 			ask selected_cell {
-				obstacle <- action_type;
-				ask cell overlapping selected_cell {
-					is_wall <- true;
-				}
-
-				if (action_type = 2) {
-					count_fire <- count_fire + 1;
-				}
-
-				if (action_type = 0) {
-					if (obstacle = 2) {
-						count_fire <- count_fire - 1;
+				if (action_type = 3) {
+					create people {
+						location <- #user_location;
+						center <- any_location_in((stand closest_to self).shape);
+						target <- cell at center.location;
 					}
 
-					obstacle <- -1;
+				} else {
+					obstacle <- action_type;
 					ask cell overlapping selected_cell {
-						is_wall <- false;
+						is_wall <- true;
+					}
+
+					if (action_type = 1) {
+						count_fire <- count_fire + 1;
+						ask people {
+							is_presenter <- false;
+							target <- one_of(cell where each.is_exit).location;
+						}
+
+					}
+
+					if (action_type = 0) {
+						if (obstacle = 1) {
+							count_fire <- count_fire - 1;
+						}
+
+						obstacle <- -1;
+						ask cell overlapping selected_cell {
+							is_wall <- false;
+						}
+
 					}
 
 				}

@@ -8,10 +8,11 @@ experiment main type: gui {
 			species button aspect: normal;
 			event mouse_down action: activate_act;
 		}
-		display Plan type: opengl ambient_light:(0){
+		display Plan type: opengl ambient_light:(0) background:#lightgray{
 			grid ground;
 			species ground;
 			species wall;
+			species stand;
 			species people;
 			event mouse_down action: cell_management;
 		}

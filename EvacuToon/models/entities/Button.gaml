@@ -1,7 +1,7 @@
 model button
 
 import "../Parameters.gaml"
-grid button width: 3 height: 1 {
+grid button width: 6 height: 1 {
 	int id <- int(self);
 	rgb bord_col <- #black;
 
