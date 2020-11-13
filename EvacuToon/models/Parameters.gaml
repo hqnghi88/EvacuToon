@@ -14,7 +14,7 @@ global {
 	//Speed of the agents
 	float speed_of_agents <- 15.0;
 	//Size of the agents
-	int nb_cols <- 100;
+	int nb_cols <- 101;
 	int nb_rows <- 100;
 	//	int size_of_agents <- 100;
 	//Center of the considered circle created by the cells
@@ -23,7 +23,7 @@ global {
 	shape_file stand_shp <- shape_file("../includes/stands.shp");
 	shape_file gates_shp <- shape_file("../includes/gates.shp");
 	list<point> cc <- [center1];
-	geometry shape <- envelope(idecaf_shp);
+	geometry shape <- envelope([idecaf_shp,gates_shp]);
 
 	//current action type
 	int action_type <- -1;

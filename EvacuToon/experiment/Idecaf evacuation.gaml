@@ -9,8 +9,9 @@ experiment main type: gui {
 			event mouse_down action: activate_act;
 		}
 		display Plan type: opengl ambient_light:(0) background:#lightgray{
-			grid ground;
+			grid ground lines:#black;
 			species ground;
+			 
 			species wall;
 			species stand;
 			species people;
