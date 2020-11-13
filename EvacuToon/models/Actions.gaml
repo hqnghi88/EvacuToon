@@ -41,9 +41,10 @@ global {
 		if (selected_cell != nil) {
 			ask selected_cell {
 				if (action_type = 3) {
-					create people {
-						location <- #user_location;
-						center <- any_location_in((stand closest_to self).shape);
+					geometry tmp<-circle(30.0) at_location #user_location;
+					create people number:5{
+						location <- any_location_in(tmp);
+						center <- any_location_in(any(stand).shape);
 						target <- cell at center.location;
 					}
 
